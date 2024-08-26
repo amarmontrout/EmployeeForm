@@ -1,6 +1,5 @@
 import React from "react";
 
-
 class EmployeeForm extends React.Component {
     constructor(props) {
         super(props);
@@ -18,6 +17,15 @@ class EmployeeForm extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         console.log("Form submitted with state:", this.state);
+
+        const employee = {
+            name: this.state.name,
+            email: this.state.email,
+            title: this.state.title,
+            department: this.state.department,
+        };
+
+        this.props.AddEmployee(employee);
 
         this.setState({ name: "", email: "", title: "", department: "" });
     }
