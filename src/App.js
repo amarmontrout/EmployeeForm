@@ -1,40 +1,45 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes, and Route
 import EmployeeForm from './Components/EmployeeForm';
-import './EmployeeForm.css';
+import EmployeeDetail from './Components/EmployeeDetail';
+import EmployeeList from './Components/EmployeeList';
 
 function App() {
-  
-  // Employees state variable
+  // define the property for the employee, the function, and the default state.
   const [employees, setEmployees] = useState([]);
 
-  // Responsible for loading from local storage
+  // maintain an array of current employees
+  const addEmployee = (employee) => {
+    setEmployees([...employees, employee]);
+  };
+
+  // save the employee array to local storage
+  const saveData = () => {
+    localStorage.setItem('employees', JSON.stringify(employees));
+  };
+
+  // Load employees from local storage on component mount
   useEffect(() => {
-    const savedEmployees = localStorage.getItem('employees');
-    console.log('Retrieved from local storage:', savedEmployees);
-    
-    if (savedEmployees) {
-      const parsedEmployees = JSON.parse(savedEmployees);
-      setEmployees(parsedEmployees);
-    }
+    const savedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+    setEmployees(savedEmployees);
   }, []);
 
-  // Function to save data to local storage
-  const saveData = (newEmployees) => {
-      console.log('Saving to local storage:', newEmployees);
-      localStorage.setItem('employees', JSON.stringify(newEmployees));
-  };
-
-  // Function to add employee to employees state variable
-  const addEmployee = (employee) => {
-    const updatedEmployees = [...employees, employee];
-    setEmployees(updatedEmployees);
-    saveData(updatedEmployees);
-  };
-  
   return (
-    <div className="App">
-      <EmployeeForm AddEmployee={addEmployee}/>
+    // create the browser component and define the paths
+    <BrowserRouter>
+    <div>
+      <Routes>
+        <Route path="/" element={
+          <>
+            <EmployeeForm onSubmit={addEmployee} />
+            <EmployeeList employees={employees} />
+            <button onClick={saveData}>Save Data</button>
+          </>
+        } />
+        <Route path="/employees/:id" element={<EmployeeDetail employees={employees} />} />
+      </Routes>
     </div>
+  </BrowserRouter>
   );
 }
 
