@@ -1,15 +1,18 @@
-// import the necessary libraries
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addEmployee } from '../redux/actions';
 import '../Content/employee.css';
 
 // define the function
-function EmployeeForm(props) {
+function EmployeeForm() {
+  
+  // define the varibales and setter functions, and set them to the default state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [title, setTitle] = useState('');
+  const [department, setDepartment] = useState('');
 
-    // define the varibales and setter functions, and set them to the default state
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [title, setTitle] = useState('');
-    const [department, setDepartment] = useState('');
+  const dispatch = useDispatch();
 
     // define a submit function
     const handleSubmit = (e) => {
@@ -23,9 +26,8 @@ function EmployeeForm(props) {
         title,
         department,
     };
-
-    // runs onSubmit from parent, addEmployee, with the employee object
-    props.onSubmit(employee);
+    
+    dispatch(addEmployee(employee));
 
     // empties text fields
     setName('');

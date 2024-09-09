@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes, and Route
+import { useDispatch, useSelector } from 'react-redux';
 import EmployeeForm from './Components/EmployeeForm';
 import EmployeeDetail from './Components/EmployeeDetail';
 import EmployeeList from './Components/EmployeeList';
+import { loadEmployees } from './redux/actions';
 
 function App() {
-  // define the property for the employee, the function, and the default state.
-  const [employees, setEmployees] = useState([]);
+  const dispatch = useDispatch();
+  const employees = useSelector((state) => state.employees);
 
-  // maintain an array of current employees
-  const addEmployee = (employee) => {
-    setEmployees([...employees, employee]);
-  };
+  useEffect(() => {
+    const savedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+    dispatch(loadEmployees(savedEmployees));
+  }, [dispatch]);
 
   // save the employee array to local storage
   const saveData = () => {
     localStorage.setItem('employees', JSON.stringify(employees));
   };
-
-  // Load employees from local storage on component mount
-  useEffect(() => {
-    const savedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
-    setEmployees(savedEmployees);
-  }, []);
 
   return (
     // create the browser component and define the paths
@@ -31,12 +27,12 @@ function App() {
       <Routes>
         <Route path="/" element={
           <>
-            <EmployeeForm onSubmit={addEmployee} />
-            <EmployeeList employees={employees} />
-            <button onClick={saveData}>Save Data</button>
+            <EmployeeForm />
+            <EmployeeList />
+            <button onClick={saveData} style={{display: 'block', margin: '0 auto' }}>Save Data</button>
           </>
         } />
-        <Route path="/employees/:id" element={<EmployeeDetail employees={employees} />} />
+        <Route path="/employees/:id" element={<EmployeeDetail />} />
       </Routes>
     </div>
   </BrowserRouter>
